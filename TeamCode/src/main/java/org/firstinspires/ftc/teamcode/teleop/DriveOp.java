@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.ArmDrive;
@@ -13,17 +11,11 @@ import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.LiftDown;
 import org.firstinspires.ftc.teamcode.commands.LiftDrive;
 import org.firstinspires.ftc.teamcode.commands.LiftUp;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.AllUpWrist;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.CloseClaw1;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.CloseClaw2;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.OpenClaw1;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.OpenClaw2;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.TwistWrist;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.ReleasePlane;
-import org.firstinspires.ftc.teamcode.commands.clawWrist.UntwistWrist;
+import org.firstinspires.ftc.teamcode.commands.clawWrist.StopIntake;
+import org.firstinspires.ftc.teamcode.commands.clawWrist.TakeInSample;
+import org.firstinspires.ftc.teamcode.commands.clawWrist.TakeOutSample;
 import org.firstinspires.ftc.teamcode.subsystem.ClawWrist;
 import org.firstinspires.ftc.teamcode.subsystem.Drivebase;
-import org.firstinspires.ftc.teamcode.subsystem.Plane;
 import org.firstinspires.ftc.teamcode.subsystem.pidfController.PIDFArm;
 import org.firstinspires.ftc.teamcode.subsystem.pidfController.PIDFLift;
 
@@ -44,18 +36,10 @@ public class DriveOp extends CommandOpMode {
     private LiftUp liftUpCommand;
     private LiftDown liftDownCommand;
 
-    private ClawWrist clawWristSubsystem;
-    private TwistWrist twistWristCommand;
-    private UntwistWrist untwistWristCommand;
-    private OpenClaw1 openClaw1Command;
-    private CloseClaw1 closeClaw1Command;
-    private OpenClaw2 openClaw2Command;
-    private CloseClaw2 closeClaw2Command;
-    private AllUpWrist upWristCommand;
-
-    private Plane planeSubsystem;
-    private ReleasePlane releaseCommand;
-
+    private ClawWrist clawSubsystem;
+    private TakeInSample takeInIntakeCommand;
+    private TakeOutSample takeOutIntakeCommand;
+    private StopIntake stopIntakeCommand;
 
     @Override
     public void initialize() {
@@ -85,6 +69,7 @@ public class DriveOp extends CommandOpMode {
 //        //TODO change tolerance if needed
         armSubsystem = new PIDFArm(hardwareMap, 0);
         armCommand = new ArmDrive(armSubsystem, ()->toolPad.getRightY());
+
 //        //TODO change tolerance if needed
         liftSubsystem = new PIDFLift(hardwareMap, 0);
         liftCommand = new LiftDrive(liftSubsystem, ()-> toolPad.getLeftY());
@@ -93,28 +78,13 @@ public class DriveOp extends CommandOpMode {
         liftDownCommand = new LiftDown(liftSubsystem);
         dpadDown.whenActive(liftDownCommand);
 
+        clawSubsystem = new ClawWrist(hardwareMap);
+        takeInIntakeCommand = new TakeInSample(clawSubsystem);
+        takeOutIntakeCommand = new TakeOutSample(clawSubsystem);
+        stopIntakeCommand = new StopIntake(clawSubsystem);
 
-        clawWristSubsystem = new ClawWrist(hardwareMap);
-        openClaw1Command = new OpenClaw1(clawWristSubsystem);
-        a.whenActive(openClaw1Command);
-        closeClaw1Command = new CloseClaw1(clawWristSubsystem);
-        b.whenActive(closeClaw1Command);
-
-        openClaw2Command = new OpenClaw2(clawWristSubsystem);
-        x.whenActive(openClaw2Command);
-        closeClaw2Command = new CloseClaw2(clawWristSubsystem);
-        yT.whenActive(closeClaw2Command);
-
-        twistWristCommand = new TwistWrist(clawWristSubsystem);
-        leftBumber.whenActive(twistWristCommand);
-        untwistWristCommand = new UntwistWrist(clawWristSubsystem);
-        rightBumber.whenActive(untwistWristCommand);
-        upWristCommand = new AllUpWrist(clawWristSubsystem);
-        dpadRight.whenActive(upWristCommand);
-
-        planeSubsystem = new Plane(hardwareMap);
-        releaseCommand = new ReleasePlane(planeSubsystem);
-        yD.whenActive(releaseCommand); //TODO see if their is a way to reset the servo after shooting
+        a.whenHeld(takeInIntakeCommand).whenReleased(stopIntakeCommand);
+        b.whenHeld(takeOutIntakeCommand).whenReleased(stopIntakeCommand);
 
         drivebase.setDefaultCommand(driveCommand);
         armSubsystem.setDefaultCommand(armCommand);

@@ -57,7 +57,7 @@ public class PIDFArm extends SubsystemBase {
         arm.setPower(power);
     }
 
-    //TODO temporary arm movement code
+    //temporary arm movement code
     public void tmpMove(double pos){
 
         if(pos > 0){

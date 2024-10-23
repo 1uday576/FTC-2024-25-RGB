@@ -25,6 +25,6 @@ public class LiftDrive extends CommandBase {
 
     @Override
     public void execute(){
-        liftSubsystem.tmpMove(multiplier.getAsDouble());
+        liftSubsystem.tmpMove(-multiplier.getAsDouble());
     }
 }
