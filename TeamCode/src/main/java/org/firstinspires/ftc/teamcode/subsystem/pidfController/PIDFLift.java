@@ -71,13 +71,15 @@ public class PIDFLift extends SubsystemBase {
 
     public void liftUp(){
         if (lift1.getCurrentPosition() >= UP) return;
+        target = UP;
         lift1.setTargetPosition(UP);
         lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift1.setPower(0.8);
     }
 
     public void liftDown(){
-        if(lift1.getCurrentPosition() <= 0 ) return;
+        if(lift1.getCurrentPosition() <= DOWN ) return;
+        target = DOWN;
         lift1.setTargetPosition(DOWN);
         lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift1.setPower(-0.8);

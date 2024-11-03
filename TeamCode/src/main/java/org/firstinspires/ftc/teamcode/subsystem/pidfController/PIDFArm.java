@@ -21,6 +21,9 @@ public class PIDFArm extends SubsystemBase {
 
     private final DcMotor arm;
 
+    private final int OUT = 300;
+    private final int IN = 0;
+
     public PIDFArm(HardwareMap hardwareMap, int tolerance) {
 //        controller = new PIDController(p, i, d);
 //        controller.setTolerance(tolerance);
@@ -73,6 +76,22 @@ public class PIDFArm extends SubsystemBase {
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(-0.80);
         }
+    }
+
+    public void armOut(){
+        if (arm.getCurrentPosition() >= OUT) return;
+        target = OUT;
+        arm.setTargetPosition(OUT);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.8);
+    }
+
+    public void armIn(){
+        if(arm.getCurrentPosition() <= IN ) return;
+        target = IN;
+        arm.setTargetPosition(IN);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(-0.8);
     }
 
     public void tmpAutonPos(int t){

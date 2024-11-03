@@ -7,6 +7,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.ArmDrive;
+import org.firstinspires.ftc.teamcode.commands.ArmIn;
+import org.firstinspires.ftc.teamcode.commands.ArmOut;
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.LiftDown;
 import org.firstinspires.ftc.teamcode.commands.LiftDrive;
@@ -21,7 +23,6 @@ import org.firstinspires.ftc.teamcode.subsystem.pidfController.PIDFLift;
 
 @TeleOp
 public class DriveOp extends CommandOpMode {
-    //TODO somehow implement Command System into the robot control for minimizing iteration-by-iteration robot logic
     private GamepadEx drivePad;
     private GamepadEx toolPad;
 
@@ -30,6 +31,8 @@ public class DriveOp extends CommandOpMode {
 
     private PIDFArm armSubsystem;
     private ArmDrive armCommand;
+    private ArmOut armOutCommand;
+    private ArmIn armInCommand;
 
     private PIDFLift liftSubsystem;
     private LiftDrive liftCommand;
@@ -57,6 +60,7 @@ public class DriveOp extends CommandOpMode {
         GamepadButton dpadTop = toolPad.getGamepadButton(GamepadKeys.Button.DPAD_UP);
         GamepadButton dpadDown = toolPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN);
         GamepadButton dpadRight = toolPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT);
+        GamepadButton dpadLeft = toolPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT);
 
 
         GamepadButton yD = drivePad.getGamepadButton(GamepadKeys.Button.Y);
@@ -69,6 +73,10 @@ public class DriveOp extends CommandOpMode {
 //        //TODO change tolerance if needed
         armSubsystem = new PIDFArm(hardwareMap, 0);
         armCommand = new ArmDrive(armSubsystem, ()->toolPad.getRightY());
+        armOutCommand = new ArmOut(armSubsystem);
+        dpadRight.whenActive(armOutCommand);
+        armInCommand = new ArmIn(armSubsystem);
+        dpadLeft.whenActive(armInCommand);
 
 //        //TODO change tolerance if needed
         liftSubsystem = new PIDFLift(hardwareMap, 0);
