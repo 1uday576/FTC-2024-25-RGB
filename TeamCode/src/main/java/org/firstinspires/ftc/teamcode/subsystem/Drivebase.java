@@ -20,19 +20,19 @@ public class Drivebase extends SubsystemBase {
         //By default the motors are in RawPower mode
         frontLeft = new Motor(hardwareMap, FL, Motor.GoBILDA.RPM_312);
         frontLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-//        frontLeft.setInverted(true);
+        frontLeft.setInverted(true);
 
         frontRight = new Motor(hardwareMap, FR, Motor.GoBILDA.RPM_312);
         frontRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-//        frontRight.setInverted(true);
+        frontRight.setInverted(true);
 
         backLeft = new Motor(hardwareMap, BL, Motor.GoBILDA.RPM_312);
         backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-//        backLeft.setInverted(true);
+        backLeft.setInverted(true);
 
         backRight = new Motor(hardwareMap, BR, Motor.GoBILDA.RPM_312);
         backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-//        backRight.setInverted(true);
+        backRight.setInverted(true);
 
         drive = new MecanumDrive(frontLeft, frontRight, backLeft, backRight);
 
@@ -54,7 +54,7 @@ public class Drivebase extends SubsystemBase {
         drive.driveRobotCentric(
                 strafeSpeed,
                 forwardSpeed,
-                turn
+                -turn
         );
     }
 }

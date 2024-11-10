@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class TestOp extends LinearOpMode {
+
+    public static double ticks_in_degree;
     @Override
 
     public void runOpMode() throws InterruptedException {
@@ -18,15 +20,20 @@ public class TestOp extends LinearOpMode {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        DcMotor lift = hardwareMap.get(DcMotorEx.class, "lift");
+        DcMotor lift = hardwareMap.get(DcMotorEx.class, "lift1");
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        ticks_in_degree = 2607.0 / 90.0;
 
         waitForStart();
 
         while(opModeIsActive()){
             telemetry.addData("Arm position: ",arm.getCurrentPosition());
-            telemetry.addData("Lift position: ",lift.getCurrentPosition());
+            telemetry.addData("Lift position: ", lift.getCurrentPosition());
+            telemetry.addData("Lift Angle: ", lift.getCurrentPosition()/ticks_in_degree);
+            telemetry.addData("Lift cos ratio: ",Math.cos(Math.toRadians(lift.getCurrentPosition() / ticks_in_degree)));
             telemetry.update();
         }
     }

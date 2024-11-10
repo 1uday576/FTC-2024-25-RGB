@@ -10,7 +10,7 @@ public class LiftDrive extends CommandBase {
 
     private final PIDFLift liftSubsystem;
     private final DoubleSupplier multiplier;
-    private final double factor = 20;
+    private final double factor = 5;
     public LiftDrive(PIDFLift subsystem, DoubleSupplier m) {
         liftSubsystem = subsystem;
         multiplier = m;
@@ -20,11 +20,11 @@ public class LiftDrive extends CommandBase {
 
 //    @Override
 //    public void execute() {
-//        liftSubsystem.move((int) (factor * multiplier));
+//        liftSubsystem.move((int) (factor * multiplier.getAsDouble()));
 //    }
 
     @Override
     public void execute(){
-        liftSubsystem.tmpMove(-multiplier.getAsDouble());
+        liftSubsystem.tmpMove(multiplier.getAsDouble());
     }
 }

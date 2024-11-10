@@ -79,7 +79,7 @@ public class DriveOp extends CommandOpMode {
         dpadLeft.whenActive(armInCommand);
 
 //        //TODO change tolerance if needed
-        liftSubsystem = new PIDFLift(hardwareMap, 0);
+        liftSubsystem = new PIDFLift(hardwareMap, telemetry,0);
         liftCommand = new LiftDrive(liftSubsystem, ()-> toolPad.getLeftY());
         liftUpCommand = new LiftUp(liftSubsystem);
         dpadTop.whenActive(liftUpCommand);

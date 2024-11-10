@@ -4,10 +4,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import java.io.PipedOutputStream;
 
 public class PIDFArm extends SubsystemBase {
     private PIDController controller;
@@ -15,14 +12,20 @@ public class PIDFArm extends SubsystemBase {
     //The 'f' from the video = 'Kcos' from CTRL ALT FTC documentation
     private double p = 0, i = 0, d = 0, f = 0;
 
-    private final double ticks_in_degree; //Total number of ticks in a degree
+    private final double inch_per_tick = 1; //Total number of ticks in a degree
 
-    private int target = 0; //target position
+    public static int target = 0; //target position
+    public static int currentRead = 0;
+    private int error = -100;
 
     private final DcMotor arm;
 
     private final int OUT = 300;
     private final int IN = 0;
+
+    public static double lengthInch = 0.0;
+    public static double angleRad = 0.0;
+    public static int tickLimit = 0;
 
     public PIDFArm(HardwareMap hardwareMap, int tolerance) {
 //        controller = new PIDController(p, i, d);
@@ -30,7 +33,6 @@ public class PIDFArm extends SubsystemBase {
 
         arm = hardwareMap.get(DcMotorEx.class, "arm");
 //        arm.setDirection(DcMotorSimple.Direction.REVERSE);
-        ticks_in_degree = arm.getMotorType().getTicksPerRev() / 180.0;
 
         //TODO these can be remove once PIDF is setup
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -49,32 +51,62 @@ public class PIDFArm extends SubsystemBase {
         }
     }
 
+    public int limit(){
+        angleRad = Math.toRadians(PIDFLift.currentRead / PIDFLift.ticks_in_degree);
+        lengthInch = 20.0/Math.cos(angleRad);
+        tickLimit = (int) Math.round(lengthInch * inch_per_tick);
+
+        return tickLimit;
+    }
+
     public void setPosition(int t){
         target = t;
 
         int armPos  = arm.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
-        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
+//        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
 
-        double power = pid + ff;
+        double power = pid;
         arm.setPower(power);
     }
 
     //temporary arm movement code
     public void tmpMove(double pos){
 
+//        if(pos > 0){
+//            int limit = limit();
+//            if(target >= limit+error) target = limit;
+//            else target += 5;
+//            arm.setTargetPosition(target);
+//            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            arm.setPower(0.80);
+//        }else if(pos < 0){
+//            if(!(target <= 50)){
+//                target -= 5;
+//                arm.setTargetPosition(target);
+//                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                arm.setPower(0.80);
+//            } else{
+//                arm.setPower(0.0);
+//            }
+//        }
+        //temporary calculation of limit
+        limit();
+        currentRead = arm.getCurrentPosition();
         if(pos > 0){
             target += 5;
             arm.setTargetPosition(target);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(0.80);
         }else if(pos < 0){
-            if(target != 10){
+            if(!(target <= 50)){
                 target -= 5;
+                arm.setTargetPosition(target);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                arm.setPower(0.80);
+            } else{
+                arm.setPower(0.0);
             }
-            arm.setTargetPosition(target);
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(-0.80);
         }
     }
 
@@ -112,9 +144,9 @@ public class PIDFArm extends SubsystemBase {
         controller.setPID(p, i, d);
         int armPos  = arm.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
-        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
+//        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
 
-        double power = pid + ff;
+        double power = pid;
         arm.setPower(power);
     }
 
