@@ -37,12 +37,6 @@ public class PIDFLift extends SubsystemBase {
         lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lift1.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-    public void pidfUP(){
-        target = UP;
-    }
-    public void pidfDOWN(){
-        target = DOWN;
-    }
     public void move(int posChange) {
         target += posChange;
 
@@ -63,6 +57,7 @@ public class PIDFLift extends SubsystemBase {
     //TODO temporary lift moving code
     public void tmpMove(double pos){
         currentRead = lift1.getCurrentPosition();
+
         if(pos > 0){
             if(target <= 60 && override){
                 target = currentRead;
@@ -104,6 +99,11 @@ public class PIDFLift extends SubsystemBase {
         lift1.setTargetPosition(DOWN);
         lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift1.setPower(0.8);
+        while (lift1.isBusy());
+        target = 0;
+        override = true;
+        lift1.setPower(0.0);
+        lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void tmpAutonPos(int t){
