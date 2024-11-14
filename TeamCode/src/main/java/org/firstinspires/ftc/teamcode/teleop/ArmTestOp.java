@@ -9,6 +9,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.ArmDrive;
+import org.firstinspires.ftc.teamcode.commands.ArmIn;
+import org.firstinspires.ftc.teamcode.commands.ArmOut;
 import org.firstinspires.ftc.teamcode.commands.DefaultDrive;
 import org.firstinspires.ftc.teamcode.commands.LiftDown;
 import org.firstinspires.ftc.teamcode.commands.LiftDrive;
@@ -25,7 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystem.pidfController.PIDFLift;
 @TeleOp
 public class ArmTestOp extends CommandOpMode {
     private GamepadEx drivePad;
-    private GamepadEx toolPad;
+    public static GamepadEx toolPad;
 
     private Drivebase drivebase;
     private DefaultDrive driveCommand;
@@ -66,7 +68,10 @@ public class ArmTestOp extends CommandOpMode {
                 ()-> drivePad.getLeftY(), ()-> drivePad.getRightX());
 
         armSubsystem = new PIDFArm(hardwareMap, 0);
+        PIDFArm.target = 0;
         armCommand = new ArmDrive(armSubsystem, ()->toolPad.getRightY());
+        dpadRight.whenActive(new InstantCommand(armSubsystem::armOut, armSubsystem));
+        dpadLeft.whenPressed(new InstantCommand(armSubsystem::armIn, armSubsystem));
 
         liftSubsystem = new PIDFLift(hardwareMap, telemetry, 0);
         liftCommand = new LiftDrive(liftSubsystem, ()-> toolPad.getLeftY());

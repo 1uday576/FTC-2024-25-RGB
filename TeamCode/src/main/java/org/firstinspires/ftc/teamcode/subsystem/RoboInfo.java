@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystem.pidfController.PIDFArm;
 import org.firstinspires.ftc.teamcode.subsystem.pidfController.PIDFLift;
+import org.firstinspires.ftc.teamcode.teleop.ArmTestOp;
 
 public class RoboInfo extends SubsystemBase {
     public Telemetry telemetry;
@@ -13,6 +14,8 @@ public class RoboInfo extends SubsystemBase {
     }
 
     public void updateInfo(){
+        telemetry.addLine("Tool pad Joystick");
+        telemetry.addData("Right stick Y: ", ArmTestOp.toolPad.getRightY());
         telemetry.addLine("Lift Information:");
         telemetry.addData("Lit position: ", PIDFLift.currentRead);
 

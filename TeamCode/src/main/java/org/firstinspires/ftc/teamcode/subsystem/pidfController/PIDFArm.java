@@ -79,13 +79,13 @@ public class PIDFArm extends SubsystemBase {
 //            else target += 5;
 //            arm.setTargetPosition(target);
 //            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            arm.setPower(0.80);
+//            arm.setPower(1);
 //        }else if(pos < 0){
 //            if(!(target <= 50)){
 //                target -= 5;
 //                arm.setTargetPosition(target);
 //                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                arm.setPower(0.80);
+//                arm.setPower(1);
 //            } else{
 //                arm.setPower(0.0);
 //            }
@@ -97,13 +97,13 @@ public class PIDFArm extends SubsystemBase {
             target += 5;
             arm.setTargetPosition(target);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(0.80);
+            arm.setPower(1);
         }else if(pos < 0){
             if(!(target <= 50)){
                 target -= 5;
                 arm.setTargetPosition(target);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setPower(0.80);
+                arm.setPower(1);
             } else{
                 arm.setPower(0.0);
             }
@@ -115,7 +115,7 @@ public class PIDFArm extends SubsystemBase {
         target = OUT;
         arm.setTargetPosition(OUT);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(0.8);
+        arm.setPower(1);
     }
 
     public void armIn(){
@@ -123,7 +123,7 @@ public class PIDFArm extends SubsystemBase {
         target = IN;
         arm.setTargetPosition(IN);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(-0.8);
+        arm.setPower(1);
     }
 
     public void tmpAutonPos(int t){
