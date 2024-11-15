@@ -16,16 +16,19 @@ public class PIDFLift extends SubsystemBase {
     //The 'f' from the video = 'Kcos' from CTRL ALT FTC documentation
     private double p = 0.0045, i = 0, d = 0.00015, f = 0.06;
 
-    public int target = 0;
+    public static int target = 0;
     public static int currentRead = -1;
     public boolean override = false;
+    public static int newDown = 60;
+    public static int currDown = 40;
+    public boolean goingUp = true;
     public static double ticks_in_degree = 2607 / 90.0;
     public int target1 = 0;
 
-    private final DcMotor lift1;
+    public static DcMotor lift1 = null;
 
     public static final int UP = 2000;
-    public static final int DOWN = 10;
+    public static final int DOWN = 60;
 
     public PIDFLift(HardwareMap hardwareMap, Telemetry tel, int tolerance) {
         controller = new PIDController(p,i,d);
@@ -63,22 +66,28 @@ public class PIDFLift extends SubsystemBase {
                 target = currentRead;
                 override = false;
             }
-            target += 5;
+            if(goingUp) {
+                currDown = newDown+100;
+                goingUp = false;
+            }
+            target += (int) (10 * pos);
             lift1.setTargetPosition(target);
             lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             lift1.setPower(0.8);
         }else if(pos < 0){
-            if(target <= 60){
+            if(target <= 60 || (PIDFArm.target >= 100 && target <= currDown)){
                 target = 0;
                 override = true;
                 lift1.setPower(0.0);
                 lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }else {
-                target -= 5;
+                target -= (int) (10*(-pos));
                 lift1.setPower(0.8);
                 lift1.setTargetPosition(target);
                 lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
+
+            goingUp = true;
 
         }
 
@@ -86,6 +95,10 @@ public class PIDFLift extends SubsystemBase {
     }
 
     public void liftUp(){
+        if(goingUp){
+            currDown = newDown+100;
+            goingUp = false;
+        }
         if (lift1.getCurrentPosition() >= UP) return;
         target = UP;
         lift1.setTargetPosition(UP);
@@ -94,12 +107,18 @@ public class PIDFLift extends SubsystemBase {
     }
 
     public void liftDown(){
+        goingUp = true;
         if(lift1.getCurrentPosition() <= DOWN ) return;
-        target = DOWN;
+
+        if(PIDFArm.target <= 100) target = DOWN;
+        else target = currDown;
+
         lift1.setTargetPosition(DOWN);
         lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift1.setPower(0.8);
-        while (lift1.isBusy());
+        while (lift1.isBusy()){
+            currentRead = lift1.getCurrentPosition();
+        };
         target = 0;
         override = true;
         lift1.setPower(0.0);

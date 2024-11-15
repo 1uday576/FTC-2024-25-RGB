@@ -17,7 +17,11 @@ public class RoboInfo extends SubsystemBase {
         telemetry.addLine("Tool pad Joystick");
         telemetry.addData("Right stick Y: ", ArmTestOp.toolPad.getRightY());
         telemetry.addLine("Lift Information:");
-        telemetry.addData("Lit position: ", PIDFLift.currentRead);
+        telemetry.addData("Lit current position: ", PIDFLift.currentRead);
+        telemetry.addData("Lift target position: ", PIDFLift.target);
+        telemetry.addData("Lift down: ", PIDFLift.DOWN);
+        telemetry.addData("lift newDown", PIDFLift.newDown);
+        telemetry.addData("lift currDown", PIDFLift.currDown);
 
         telemetry.addLine("Arm Information:");
         telemetry.addData("Arm current position: ", PIDFArm.currentRead);

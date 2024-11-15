@@ -20,7 +20,7 @@ public class PIDFArm extends SubsystemBase {
 
     private final DcMotor arm;
 
-    private final int OUT = 300;
+    private final int OUT = 7000;
     private final int IN = 0;
 
     public static double lengthInch = 0.0;
@@ -93,14 +93,16 @@ public class PIDFArm extends SubsystemBase {
         //temporary calculation of limit
         limit();
         currentRead = arm.getCurrentPosition();
+        PIDFLift.newDown = PIDFLift.lift1.getCurrentPosition();
         if(pos > 0){
-            target += 5;
+            if(target >= 7000) return;
+            target += (int)(30*pos);
             arm.setTargetPosition(target);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(1);
         }else if(pos < 0){
-            if(!(target <= 50)){
-                target -= 5;
+            if(!(target <= 30)){
+                target -= (int) (30*(-pos));
                 arm.setTargetPosition(target);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(1);
