@@ -14,7 +14,7 @@ public class Drivebase extends SubsystemBase {
 
     private final String BL = "backLeftMotor", BR = "backRightMotor";
 
-    private final double DEAD_ZONE = 0.2;
+    private final double DEAD_ZONE = 0.1;
 
     public Drivebase(HardwareMap hardwareMap){
         //By default the motors are in RawPower mode
@@ -40,15 +40,15 @@ public class Drivebase extends SubsystemBase {
 
     public void move(double leftX, double leftY, double rightX){
         double strafeSpeed = leftX > DEAD_ZONE || leftX < -DEAD_ZONE
-                ? leftX
+                ? 0.95 * leftX
                 : 0;
 
         double forwardSpeed = leftY > DEAD_ZONE || leftY < -DEAD_ZONE
-                ? leftY
+                ? 0.95 * leftY
                 : 0;
 
         double turn = rightX > DEAD_ZONE || rightX < -DEAD_ZONE
-                ? rightX
+                ? 0.95 * rightX
                 : 0;
 
         drive.driveRobotCentric(

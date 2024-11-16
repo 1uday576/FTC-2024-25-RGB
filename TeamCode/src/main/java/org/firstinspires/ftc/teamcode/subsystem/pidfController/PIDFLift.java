@@ -27,7 +27,7 @@ public class PIDFLift extends SubsystemBase {
 
     public static DcMotor lift1 = null;
 
-    public static final int UP = 2000;
+    public static final int UP = 2200;
     public static final int DOWN = 60;
 
     public PIDFLift(HardwareMap hardwareMap, Telemetry tel, int tolerance) {
